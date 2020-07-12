@@ -16,7 +16,14 @@ Into `mariadb/docker-entrypoint-initdb.d` directory and copy the `createdb.sql.e
 
 ### Prepare the source code of the other projects
 
-Clone all the projects of the platform before continue.
+Clone all the applications of the platform before continue in the same level of this project. For example:
+
+```
+/
+ - Docker
+ - Challenges
+ - other-apps
+```
 
 ### Debug in Linux
 
