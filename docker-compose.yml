@@ -1,0 +1,51 @@
+version: '3'
+
+networks:
+  frontend:
+    driver: ${NETWORKS_DRIVER}
+  backend:
+    driver: ${NETWORKS_DRIVER}
+
+services:
+  
+  ###############################################################
+  laravel:
+    image: webwork/laravel
+    build:
+      context: ./laravel
+      args:
+        INSTALL_XDEBUG: ${INSTALL_XDEBUG}
+        INSTALL_BUILDING_TOOLS: ${INSTALL_BUILDING_TOOLS}
+  
+  ###############################################################
+  laravel_build:
+    image: webwork/laravel-build
+    build:
+      context: ./laravel
+      dockerfile: Dockerfile.build
+  
+  ###############################################################
+  challenges:
+    image: webwork/laravel
+    volumes:
+      - "~/.cache/composer:/root/cache/composer"
+    networks:
+      - backend
+    working_dir: ${CHALLENGES_CODE_PATH_CONTAINER}
+  
+  ### NGINX Server #########################################
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        NGINX_PHP_UPSTREAM_PORT: "9000"
+    volumes:
+      - ${NGINX_HOST_LOGS_PATH}:/var/log/nginx
+    ports:
+      - "${NGINX_HOST_HTTP_PORT}:80"
+      - "${NGINX_HOST_HTTPS_PORT}:443"
+    depends_on:
+      - challenges
+    networks:
+      - frontend
+      - backend

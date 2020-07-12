@@ -1,0 +1,51 @@
+version: '3'
+
+networks:
+  frontend:
+    driver: ${NETWORKS_DRIVER}
+  backend:
+    driver: ${NETWORKS_DRIVER}
+
+volumes:
+  redis:
+    driver: ${VOLUMES_DRIVER}
+  mariadb:
+    driver: ${VOLUMES_DRIVER}
+
+services:
+  ###############################################################
+  challenges:
+    volumes:
+      - ${CHALLENGES_CODE_PATH_HOST}:${CHALLENGES_CODE_PATH_CONTAINER}
+      - ${SSH_PATH}:/home/www-data/.ssh
+    extra_hosts:
+      - "host.docker.internal:${DOCKER_HOST_IP}"
+    environment:
+      - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+      - FAKETIME=${PHP_FPM_FAKETIME}
+      - COMPOSER_MEMORY_LIMIT=-1
+  
+  ### NGINX Server #########################################
+  nginx:
+    volumes:
+      - ${CHALLENGES_CODE_PATH_HOST}:${CHALLENGES_CODE_PATH_CONTAINER}
+      - ./logs/nginx/:/var/log/nginx
+      - ./nginx/sites/:/etc/nginx/sites-available
+      - ./nginx/ssl/:/etc/nginx/ssl
+
+  ### MariaDB ##############################################
+  mariadb:
+    image: yobasystems/alpine-mariadb:10.4.12
+    volumes:
+      - ${DATA_PATH_HOST}/mariadb:/var/lib/mysql
+      - ${MARIADB_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_DATABASE=${MARIADB_DATABASE}
+      - MYSQL_USER=${MARIADB_USER}
+      - MYSQL_PASSWORD=${MARIADB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    ports:
+      - "${MARIADB_PORT}:3306"
+    networks:
+      - backend
+      - frontend

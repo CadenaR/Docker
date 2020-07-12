@@ -1,0 +1,24 @@
+#
+# Used to run autotest in our CI.
+#
+ARG ALPINE_PHP_VERSION=7.4
+
+FROM webwork/laravel:php${ALPINE_PHP_VERSION}
+
+ARG ALPINE_PHP_VERSION=7.4
+
+RUN apk add --no-cache --update \
+    zip \
+    git \
+    openssh
+
+RUN apk add --no-cache $PHPIZE_DEPS \
+      && pecl install xdebug-2.9.6 \
+      && docker-php-ext-enable xdebug
+
+COPY xdebug-${ALPINE_PHP_VERSION}.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+RUN composer global require hirak/prestissimo
