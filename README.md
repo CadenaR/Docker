@@ -20,8 +20,8 @@ Clone all the applications of the platform before continue in the same level of 
 
 ```
 /
- - Docker
- - Challenges
+ - docker
+ - challenges
  - other-apps
 ```
 
@@ -46,7 +46,7 @@ docker-compose build laravel
 Up and running the platform
 
 ```bash
-docker-compose up -d nginx mariadb redis
+docker-compose up -d nginx mariadb
 ```
 
 ### Edit hosts file
