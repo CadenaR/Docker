@@ -82,6 +82,6 @@ docker-compose exec --user=www-data challenges sh
 Now you can run the project instructions. For example, run migration or install dependencies with composer.
 
 ```bash
-$ /var/www/challenges artisan queue:work
+/var/www/challenges $ artisan queue:work
 ```
 
