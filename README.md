@@ -76,7 +76,7 @@ docker-compose down
 To run command inside the apps, you need to enter to the container. For example, for enter to the challenges container you need to run:
 
 ```bash
-docker-compose exce --user=www-data challenges sh
+docker-compose exec --user=www-data challenges sh
 ```
 
 Now you can run the project instructions. For example, run migration or install dependencies with composer.
